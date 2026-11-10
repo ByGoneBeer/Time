@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByGone Spoofer v2.7 — Спуфер HWID для Windows</title>
+<meta name="description" content="ByGone Spoofer v2.7 — профессиональный спуфер HWID для Windows 10/11. Полная смена идентификаторов железа, очистка следов, откат системы.">
+<meta property="og:title" content="ByGone Spoofer v2.7">
+<meta property="og:description" content="Спуфер HWID для Windows. Полная смена идентификаторов, очистка следов, откат.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #000000;
+    --bg-2: #070707;
+    --panel: #0b0b0b;
+    --panel-2: #101010;
+    --border: rgba(255,255,255,0.09);
+    --border-hi: rgba(255,255,255,0.32);
+    --text: #ffffff;
+    --muted: #9a9a9a;
+    --dim: #5c5c5c;
+    --white: #ffffff;
+    --off: #d4d4d4;
+    --grad: linear-gradient(135deg, #ffffff, #cccccc);
+    --grad-soft: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 110px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--white), var(--muted));
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--white); }
+
+::selection { background: rgba(255,255,255,0.3); color: #fff; }
+
+/* ===== BACKGROUND ===== */
+.bg-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.16;
+    will-change: transform;
+}
+.orb-a {
+    width: 620px; height: 620px;
+    background: radial-gradient(circle, #ffffff, transparent 68%);
+    top: -240px; left: -140px;
+    animation: floatA 22s ease-in-out infinite;
+}
+.orb-b {
+    width: 540px; height: 540px;
+    background: radial-gradient(circle, #cccccc, transparent 68%);
+    top: 34%; right: -180px;
+    animation: floatB 28s ease-in-out infinite;
+}
+.orb-c {
+    width: 460px; height: 460px;
+    background: radial-gradient(circle, #999999, transparent 68%);
+    bottom: -160px; left: 26%;
+    animation: floatA 32s ease-in-out infinite reverse;
+}
+
+@keyframes floatA {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(60px,-44px) scale(1.1); }
+}
+@keyframes floatB {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-52px,48px) scale(0.92); }
+}
+
+/* ===== FLOATING SHAPES ===== */
+.bg-shapes {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    will-change: transform;
+    animation: shapeFloat var(--dur, 30s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+.shape-square {
+    width: 74px;
+    height: 74px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+    transform: rotate(var(--rot, 0deg));
+}
+
+.shape-ring {
+    width: 108px;
+    height: 108px;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03), transparent 70%);
+}
+
+.shape-tri {
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 52px solid rgba(255,255,255,0.045);
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.06));
+    transform: rotate(var(--rot, 0deg));
+}
+
+@keyframes shapeFloat {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg)) scale(1);
+        opacity: 0.35;
+    }
+    25% {
+        transform: translate3d(26px, -34px, 0) rotate(calc(var(--rot, 0deg) + 8deg)) scale(1.06);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translate3d(-16px, -62px, 0) rotate(calc(var(--rot, 0deg) - 6deg)) scale(0.96);
+        opacity: 0.45;
+    }
+    75% {
+        transform: translate3d(-34px, -24px, 0) rotate(calc(var(--rot, 0deg) + 4deg)) scale(1.03);
+        opacity: 0.65;
+    }
+    100% {
+        transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg)) scale(1);
+        opacity: 0.35;
+    }
+}
+
+/* ===== CONNECTING LINES ===== */
+.bg-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.5;
+}
+
+.bg-lines span {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent);
+    animation: lineSlide linear infinite;
+}
+
+@keyframes lineSlide {
+    0% { transform: translateY(-100%); opacity: 0; }
+    12% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* ===== MOUSE GLOW ===== */
+.bg-glow {
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.055), transparent 65%);
+    filter: blur(40px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    will-change: transform;
+}
+
+.bg-glow.on { opacity: 1; }
+
+/* ===== VIGNETTE ===== */
+.bg-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 55% at 50% 45%, transparent 40%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shape, .bg-lines span { animation: none !important; }
+    .bg-glow { display: none; }
+}
+#particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== NAVBAR ===== */
+.nav-wrap {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: calc(100% - 40px);
+    max-width: 1160px;
+    transition: top 0.3s ease;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 20px;
+    background: rgba(8,8,8,0.72);
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.3s ease;
+}
+
+.nav.scrolled {
+    background: rgba(5,5,5,0.92);
+    border-color: rgba(255,255,255,0.1);
+    padding: 9px 20px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+    text-decoration: none;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.nav-brand img {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+}
+
+.nav-version {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(187,187,187,0.12);
+    color: var(--off);
+    border: 1px solid rgba(187,187,187,0.25);
+    letter-spacing: 0.4px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 13px;
+    border-radius: 9px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--white);
+    background: rgba(255,255,255,0.08);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    user-select: none;
+    padding: 5px 8px;
+    border-radius: 9px;
+    transition: background 0.2s;
+}
+
+.lang-toggle:hover { background: rgba(255,255,255,0.04); }
+
+.lang-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--dim);
+    transition: color 0.25s ease;
+    letter-spacing: 0.5px;
+}
+
+.lang-label.on { color: var(--white); }
+
+.lang-track {
+    width: 34px;
+    height: 18px;
+    border-radius: 9px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    position: relative;
+    transition: background 0.25s;
+}
+
+.lang-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--grad);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.lang-thumb.en { transform: translateX(16px); }
+
+.btn-nav {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: var(--grad);
+    color: #000000;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(255,255,255,0.10);
+}
+
+.btn-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(255,255,255,0.20);
+}
+
+.nav-burger {
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-burger span {
+    width: 16px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all 0.25s;
+}
+
+/* ===== LAYOUT ===== */
+main, .hero, footer {
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* ===== HERO ===== */
+.hero {
+    padding: 165px 0 90px;
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: rgba(187,187,187,0.1);
+    border: 1px solid rgba(187,187,187,0.3);
+    color: var(--off);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    letter-spacing: 0.2px;
+}
+
+.hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--off);
+    box-shadow: 0 0 8px var(--off);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.hero-logo {
+    display: block;
+    width: 82px;
+    height: 82px;
+    border-radius: 20px;
+    margin: 0 auto 26px;
+    box-shadow: 0 20px 50px rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.12);
+    animation: logoFloat 5s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+}
+
+.hero h1 {
+    font-size: clamp(42px, 8vw, 86px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff 0%, #b0b0b0 45%, #fff 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+    to { background-position: 220% center; }
+}
+
+.hero-sub {
+    font-size: clamp(16px, 2.4vw, 22px);
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 18px;
+    letter-spacing: -0.3px;
+}
+
+.hero-desc {
+    max-width: 660px;
+    margin: 0 auto 40px;
+    font-size: 15.5px;
+    color: var(--muted);
+    line-height: 1.75;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+}
+
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    padding: 16px 34px;
+    border-radius: 13px;
+    background: var(--grad);
+    color: #000000;
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 10px 34px rgba(255,255,255,0.12);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -120%;
+    width: 120%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transition: left 0.65s;
+}
+
+.btn-primary:hover::before { left: 120%; }
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 46px rgba(255,255,255,0.22);
+}
+
+.btn-secondary {
+    padding: 16px 34px;
+    border-radius: 13px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+}
+
+/* Hero stats */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.stat {
+    background: rgba(8,8,8,0.85);
+    padding: 24px 14px;
+    transition: background 0.3s;
+}
+
+.stat:hover { background: rgba(255,255,255,0.045); }
+
+.stat-num {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 5px;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    padding: 92px 0;
+}
+
+.section-head {
+    text-align: center;
+    margin-bottom: 52px;
+}
+
+.section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+}
+
+.section-title {
+    font-size: clamp(28px, 4.6vw, 44px);
+    font-weight: 900;
+    letter-spacing: -1.3px;
+    margin-bottom: 14px;
+    line-height: 1.15;
+}
+
+.section-desc {
+    font-size: 15.5px;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ===== NEW IN 2.7 ===== */
+.new-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.new-card {
+    background: linear-gradient(160deg, rgba(14,14,14,0.9), rgba(10,10,15,0.95));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.new-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+}
+
+.new-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 1px;
+    background: var(--grad);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s;
+    pointer-events: none;
+}
+
+.new-card:hover::after { opacity: 0.7; }
+
+.new-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 54px rgba(0,0,0,0.5);
+}
+
+.new-badge {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-bottom: 14px;
+    background: rgba(200,200,200,0.15);
+    color: var(--muted);
+    border: 1px solid rgba(200,200,200,0.3);
+}
+
+.new-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--grad-soft);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.new-icon svg {
+    width: 21px;
+    height: 21px;
+    stroke: var(--white);
+    fill: none;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.new-card h3 {
+    font-size: 16.5px;
+    font-weight: 800;
+    margin-bottom: 9px;
+    letter-spacing: -0.3px;
+}
+
+.new-card p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+/* ===== SPOOF LIST ===== */
+.spoof-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.spoof-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    position: sticky;
+    top: 120px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: rgba(10,10,10,0.7);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+    font-family: inherit;
+}
+
+.tab:hover {
+    border-color: rgba(255,255,255,0.14);
+    color: var(--text);
+}
+
+.tab.active {
+    background: rgba(255,255,255,0.09);
+    border-color: var(--border-hi);
+    color: var(--white);
+}
+
+.tab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: currentColor;
+    opacity: 0.6;
+}
+
+.tab.active .tab-dot { opacity: 1; box-shadow: 0 0 9px currentColor; }
+
+.tab-count {
+    margin-left: auto;
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    font-weight: 800;
+}
+
+.spoof-panel {
+    background: linear-gradient(160deg, rgba(14,14,14,0.92), rgba(10,10,15,0.96));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 30px;
+    min-height: 420px;
+}
+
+.spoof-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.spoof-panel-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: var(--grad-soft);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.spoof-panel-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--white);
+    fill: none;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.spoof-panel h3 {
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.spoof-panel-desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-bottom: 24px;
+    margin-left: 60px;
+}
+
+.item-list {
+    list-style: none;
+    display: grid;
+    gap: 9px;
+}
+
+.item-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.018);
+    border: 1px solid rgba(255,255,255,0.04);
+    font-size: 13.5px;
+    color: #cccccc;
+    transition: all 0.25s ease;
+}
+
+.item-list li:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.18);
+    transform: translateX(3px);
+}
+
+.item-list li svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    stroke: var(--white);
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.item-list code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--white);
+    background: rgba(255,255,255,0.09);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+/* ===== PRICING ===== */
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.price-card {
+    background: linear-gradient(165deg, rgba(14,14,14,0.92), rgba(5,5,5,0.96));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 30px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.price-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+}
+
+.price-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255,255,255,0.22);
+    box-shadow: 0 26px 56px rgba(0,0,0,0.55), 0 0 44px rgba(255,255,255,0.08);
+}
+
+.price-card.featured {
+    border-color: rgba(255,255,255,0.3);
+    background: linear-gradient(165deg, rgba(255,255,255,0.08), rgba(200,200,200,0.05) 55%, rgba(5,5,5,0.97));
+    box-shadow: 0 0 50px rgba(255,255,255,0.1);
+}
+
+.price-card.featured::before {
+    background: var(--grad);
+    height: 2px;
+}
+
+.price-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: var(--grad);
+    color: #000000;
+}
+
+.price-dur {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2.6px;
+    color: var(--dim);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.price-card.featured .price-dur {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.price-val {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, #fff, #b0b0b0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.price-val span {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.price-per {
+    font-size: 11.5px;
+    color: var(--dim);
+    margin-bottom: 22px;
+    font-weight: 600;
+}
+
+.btn-buy {
+    display: block;
+    padding: 13px;
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.28s ease;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-buy:hover {
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+}
+
+.price-card.featured .btn-buy {
+    background: var(--grad);
+    border: none;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(255,255,255,0.12);
+}
+
+.price-card.featured .btn-buy:hover {
+    box-shadow: 0 12px 34px rgba(255,255,255,0.20);
+}
+
+/* ===== GAMES ===== */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+.game-chip {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: rgba(10,10,10,0.75);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.game-chip:hover {
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-3px);
+    background: rgba(14,14,14,0.9);
+}
+
+.game-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.game-name {
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+.game-ac {
+    font-size: 10.5px;
+    color: var(--dim);
+    margin-top: 2px;
+    font-weight: 600;
+}
+
+/* ===== STEPS ===== */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    counter-reset: step;
+}
+
+.step {
+    position: relative;
+    padding: 30px 24px 26px;
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(14,14,14,0.9), rgba(10,10,15,0.95));
+    border: 1px solid var(--border);
+    counter-increment: step;
+    transition: all 0.4s ease;
+}
+
+.step:hover {
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-4px);
+}
+
+.step::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-size: 40px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.035);
+    letter-spacing: -2px;
+    line-height: 1;
+}
+
+.step h3 {
+    font-size: 15.5px;
+    font-weight: 800;
+    margin-bottom: 9px;
+    padding-right: 50px;
+    letter-spacing: -0.3px;
+}
+
+.step p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+/* ===== FAQ ===== */
+.faq-list {
+    max-width: 880px;
+    margin: 0 auto;
+    display: grid;
+    gap: 11px;
+}
+
+.faq-item {
+    background: rgba(10,10,10,0.75);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item.open {
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(14,14,14,0.9);
+}
+
+.faq-q {
+    width: 100%;
+    padding: 19px 22px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 14.5px;
+    font-weight: 700;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: color 0.2s;
+    letter-spacing: -0.2px;
+}
+
+.faq-q:hover { color: var(--white); }
+
+.faq-item.open .faq-q { color: var(--white); }
+
+.faq-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.faq-icon::before,
+.faq-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: var(--white);
+    border-radius: 1px;
+    transition: all 0.3s ease;
+}
+
+.faq-icon::before { width: 9px; height: 2px; }
+.faq-icon::after { width: 2px; height: 9px; }
+
+.faq-item.open .faq-icon::after { transform: translate(-50%,-50%) rotate(90deg); opacity: 0; }
+
+.faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.faq-a-inner {
+    padding: 0 22px 21px;
+    font-size: 13.8px;
+    color: var(--muted);
+    line-height: 1.75;
+}
+
+/* ===== CONTACTS ===== */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.contact-card {
+    background: rgba(10,10,10,0.75);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 24px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    transition: all 0.35s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.28);
+    background: rgba(14,14,14,0.95);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+}
+
+.contact-role {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 9px;
+}
+
+.contact-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
+}
+
+/* ===== CTA ===== */
+.cta {
+    text-align: center;
+    padding: 72px 36px;
+    border-radius: 24px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(200,200,200,0.07) 60%, rgba(10,10,15,0.96));
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--grad);
+}
+
+.cta h2 {
+    font-size: clamp(26px, 4.2vw, 40px);
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    margin-bottom: 14px;
+}
+
+.cta p {
+    color: var(--muted);
+    font-size: 15.5px;
+    margin-bottom: 32px;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    padding: 52px 0 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.footer-brand img {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--white); }
+
+.footer-copy {
+    width: 100%;
+    text-align: center;
+    color: var(--dim);
+    font-size: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* ===== REVEAL ===== */
+.reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+
+.reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== BACK TO TOP ===== */
+.to-top {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(10,10,10,0.9);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: all 0.3s ease;
+    z-index: 900;
+}
+
+.to-top.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.to-top:hover {
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.1);
+}
+
+.to-top svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--white);
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ===== TOAST ===== */
+.toast {
+    position: fixed;
+    bottom: 26px;
+    left: 50%;
+    transform: translate(-50%, 80px);
+    padding: 13px 22px;
+    border-radius: 12px;
+    background: rgba(10,10,10,0.96);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 600;
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 960px) {
+    .nav-links { display: none; }
+    .nav-burger { display: flex; }
+    .spoof-layout { grid-template-columns: 1fr; }
+    .spoof-tabs {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+    .tab { white-space: nowrap; padding: 10px 14px; font-size: 12.5px; }
+    .tab-count { display: none; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .spoof-panel-desc { margin-left: 0; }
+}
+
+@media (max-width: 640px) {
+    .nav-wrap { top: 10px; width: calc(100% - 20px); }
+    .nav { padding: 10px 14px; border-radius: 13px; }
+    .nav-brand span { display: none; }
+    .btn-nav { padding: 9px 15px; font-size: 12px; }
+    .hero { padding: 130px 0 60px; }
+    .hero-logo { width: 64px; height: 64px; }
+    .hero h1 { letter-spacing: -1.5px; }
+    .section { padding: 62px 0; }
+    .container { padding: 0 16px; }
+    .spoof-panel { padding: 22px 18px; }
+    .cta { padding: 50px 22px; }
+    .to-top { bottom: 16px; right: 16px; width: 40px; height: 40px; }
+    .hero-btns { flex-direction: column; }
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-wrap">
+    <div class="bg-grid"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="bg-lines" id="bgLines"></div>
+    <canvas id="particles"></canvas>
+    <div class="bg-shapes" id="bgShapes">
+        <div class="shape shape-square" style="left:8%;top:18%;--dur:26s;--delay:-3s;--rot:18deg"></div>
+        <div class="shape shape-ring" style="left:88%;top:26%;--dur:32s;--delay:-9s"></div>
+        <div class="shape shape-tri" style="left:16%;top:68%;--dur:29s;--delay:-14s;--rot:-12deg"></div>
+        <div class="shape shape-square" style="left:78%;top:74%;--dur:34s;--delay:-6s;--rot:34deg"></div>
+        <div class="shape shape-ring" style="left:44%;top:40%;--dur:38s;--delay:-20s"></div>
+        <div class="shape shape-tri" style="left:64%;top:12%;--dur:31s;--delay:-11s;--rot:24deg"></div>
+        <div class="shape shape-square" style="left:30%;top:88%;--dur:27s;--delay:-17s;--rot:-26deg"></div>
+        <div class="shape shape-ring" style="left:6%;top:44%;--dur:35s;--delay:-24s"></div>
+    </div>
+    <div class="bg-glow" id="bgGlow"></div>
+    <div class="bg-vignette"></div>
+</div>
+
+<div class="nav-wrap">
+    <nav class="nav" id="navbar">
+        <a href="#home" class="nav-brand">
+            <img src="icon.ico" alt="ByGone">
+            <span>ByGone</span>
+            <span class="nav-version">v2.7</span>
+        </a>
+        <div class="nav-links">
+            <a href="#new" data-ru="Что нового" data-en="What's New">Что нового</a>
+            <a href="#spoof" data-ru="Что меняется" data-en="Features">Что меняется</a>
+            <a href="#games" data-ru="Игры" data-en="Games">Игры</a>
+            <a href="#pricing" data-ru="Цены" data-en="Pricing">Цены</a>
+            <a href="#faq" data-ru="Вопросы" data-en="FAQ">Вопросы</a>
+            <a href="#contacts" data-ru="Контакты" data-en="Contacts">Контакты</a>
+        </div>
+        <div class="nav-right">
+            <div class="lang-toggle" id="langToggle" title="RU / EN">
+                <span class="lang-label on" data-lang="ru">RU</span>
+                <div class="lang-track"><div class="lang-thumb" id="langThumb"></div></div>
+                <span class="lang-label" data-lang="en">EN</span>
+            </div>
+            <a href="https://github.com/SanyaUwU/spoofer/releases/download/v2.7/ByGoneSpoofer.exe" class="btn-nav" data-ru="Скачать" data-en="Download">Скачать</a>
+            <button class="nav-burger" id="burger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+<div class="hero" id="home">
+    <div class="container">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            <span data-ru="Версия 2.7 уже доступна" data-en="Version 2.7 is out now">Версия 2.7 уже доступна</span>
+        </div>
+
+        <img src="icon.ico" alt="ByGone Spoofer" class="hero-logo">
+
+        <h1>ByGone Spoofer</h1>
+        <div class="hero-sub" data-ru="Спуфер HWID для Windows" data-en="HWID Spoofer for Windows">Спуфер HWID для Windows</div>
+        <p class="hero-desc"
+           data-ru="Полная смена аппаратных идентификаторов, очистка следов и откат системы. Встроенный ИИ-помощник, выбор игры с инструкцией под её античит. Windows 10/11, без переустановки."
+           data-en="Full hardware identifier swap, trace cleanup and system rollback. Built-in AI assistant, per-game instructions for each anti-cheat. Windows 10/11, no reinstall needed.">
+            Полная смена аппаратных идентификаторов, очистка следов и откат системы. Встроенный ИИ-помощник, выбор игры с инструкцией под её античит. Windows 10/11, без переустановки.
+        </p>
+
+        <div class="hero-btns">
+            <a href="https://github.com/SanyaUwU/spoofer/releases/download/v2.7/ByGoneSpoofer.exe" class="btn-primary">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span data-ru="Скачать v2.7" data-en="Download v2.7">Скачать v2.7</span>
+            </a>
+            <a href="#pricing" class="btn-secondary" data-ru="Смотреть тарифы" data-en="View Pricing">Смотреть тарифы</a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-num" data-count="40">0</div>
+                <div class="stat-label" data-ru="Методов" data-en="Methods">Методов</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" data-count="7">0</div>
+                <div class="stat-label" data-ru="Игр" data-en="Games">Игр</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" data-count="9">0</div>
+                <div class="stat-label" data-ru="Категорий HWID" data-en="HWID Categories">Категорий HWID</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" data-count="24" data-suffix="/7">0</div>
+                <div class="stat-label" data-ru="Поддержка" data-en="Support">Поддержка</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main>
+
+<!-- NEW IN 2.7 -->
+<section class="section" id="new">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Обновление" data-en="Update">Обновление</div>
+            <h2 class="section-title" data-ru="Что нового в v2.7" data-en="What's New in v2.7">Что нового в v2.7</h2>
+            <p class="section-desc"
+               data-ru="Крупное обновление: полный спуф материнской платы, ИИ-помощник, выбор игры и честные статусы железа."
+               data-en="A major update: full motherboard spoof, AI assistant, game selection and honest hardware statuses.">
+                Крупное обновление: полный спуф материнской платы, ИИ-помощник, выбор игры и честные статусы железа.
+            </p>
+        </div>
+
+        <div class="new-grid" id="newGrid"></div>
+    </div>
+</section>
+
+<!-- WHAT IT CHANGES -->
+<section class="section" id="spoof" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Возможности" data-en="Features">Возможности</div>
+            <h2 class="section-title" data-ru="Что перезаписывает спуфер" data-en="What the Spoofer Rewrites">Что перезаписывает спуфер</h2>
+            <p class="section-desc"
+               data-ru="Идентификаторы, которые меняются за один запуск"
+               data-en="Identifiers changed in a single run">
+                Идентификаторы, которые меняются за один запуск
+            </p>
+        </div>
+
+        <div class="spoof-layout reveal">
+            <div class="spoof-tabs" id="spoofTabs"></div>
+            <div class="spoof-panel" id="spoofPanel"></div>
+        </div>
+    </div>
+</section>
+
+<!-- GAMES -->
+<section class="section" id="games" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Новое" data-en="New">Новое</div>
+            <h2 class="section-title" data-ru="Выбор игры перед спуфом" data-en="Pick Your Game First">Выбор игры перед спуфом</h2>
+            <p class="section-desc"
+               data-ru="У каждой игры свой античит — и своя инструкция. Спуфер подскажет, что закрыть и когда перезагрузиться."
+               data-en="Each game has its own anti-cheat — and its own guide. The spoofer tells you what to close and when to reboot.">
+                У каждой игры свой античит — и своя инструкция. Спуфер подскажет, что закрыть и когда перезагрузиться.
+            </p>
+        </div>
+
+        <div class="games-grid reveal" id="gamesGrid"></div>
+    </div>
+</section>
+
+<!-- STEPS -->
+<section class="section" id="how" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Как это работает" data-en="How It Works">Как это работает</div>
+            <h2 class="section-title" data-ru="Четыре шага до нового HWID" data-en="Four Steps to a New HWID">Четыре шага до нового HWID</h2>
+        </div>
+
+        <div class="steps reveal">
+            <div class="step">
+                <h3 data-ru="Запуск от администратора" data-en="Run as Administrator">Запуск от администратора</h3>
+                <p data-ru="Спуфер пишет в HKLM и работает с сетевыми адаптерами — без прав админа изменения не применятся."
+                   data-en="The spoofer writes to HKLM and works with network adapters — without admin rights nothing will apply.">
+                    Спуфер пишет в HKLM и работает с сетевыми адаптерами — без прав админа изменения не применятся.
+                </p>
+            </div>
+            <div class="step">
+                <h3 data-ru="Выбор игры" data-en="Pick the Game">Выбор игры</h3>
+                <p data-ru="Выбери игру — спуфер покажет инструкцию именно под её античит и лаунчер."
+                   data-en="Choose your game — the spoofer shows the guide for its specific anti-cheat and launcher.">
+                    Выбери игру — спуфер покажет инструкцию именно под её античит и лаунчер.
+                </p>
+            </div>
+            <div class="step">
+                <h3 data-ru="Спуф и перезагрузка" data-en="Spoof and Reboot">Спуф и перезагрузка</h3>
+                <p data-ru="Запусти ультимативный спуф и перезагрузи ПК. Без ребута античит прочитает старый HWID из памяти."
+                   data-en="Run the ultimate spoof and reboot. Without a reboot the anti-cheat reads the old HWID from memory.">
+                    Запусти ультимативный спуф и перезагрузи ПК. Без ребута античит прочитает старый HWID из памяти.
+                </p>
+            </div>
+            <div class="step">
+                <h3 data-ru="Проверка статусов" data-en="Check the Statuses">Проверка статусов</h3>
+                <p data-ru="Раздел «Текущее железо» покажет, что спуфнуто по факту в системе, а что нет."
+                   data-en="The Hardware tab shows what is actually spoofed in the system right now.">
+                    Раздел «Текущее железо» покажет, что спуфнуто по факту в системе, а что нет.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Тарифы" data-en="Pricing">Тарифы</div>
+            <h2 class="section-title" data-ru="Выбери срок" data-en="Choose Your Plan">Выбери срок</h2>
+            <p class="section-desc"
+               data-ru="Ключ привязан к одному ПК. Бессрочный тариф — без ограничения по времени."
+               data-en="Each key is bound to one PC. The lifetime plan has no time limit.">
+                Ключ привязан к одному ПК. Бессрочный тариф — без ограничения по времени.
+            </p>
+        </div>
+
+        <div class="price-grid reveal">
+            <div class="price-card">
+                <div class="price-dur" data-ru="1 день" data-en="1 Day">1 день</div>
+                <div class="price-val">200<span>₽</span></div>
+                <div class="price-per" data-ru="попробовать" data-en="to try it">попробовать</div>
+                <a href="https://t.me/Yanwec" class="btn-buy" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+            <div class="price-card">
+                <div class="price-dur" data-ru="7 дней" data-en="7 Days">7 дней</div>
+                <div class="price-val">500<span>₽</span></div>
+                <div class="price-per" data-ru="неделя" data-en="one week">неделя</div>
+                <a href="https://t.me/Yanwec" class="btn-buy" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+            <div class="price-card featured">
+                <div class="price-tag" data-ru="ХИТ" data-en="POPULAR">ХИТ</div>
+                <div class="price-dur" data-ru="30 дней" data-en="30 Days">30 дней</div>
+                <div class="price-val">1200<span>₽</span></div>
+                <div class="price-per" data-ru="выгоднее всего" data-en="best value">выгоднее всего</div>
+                <a href="https://t.me/Yanwec" class="btn-buy" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+            <div class="price-card">
+                <div class="price-dur" data-ru="Бессрочно" data-en="Lifetime">Бессрочно</div>
+                <div class="price-val" data-ru="LIFETIME" data-en="LIFETIME">LIFETIME</div>
+                <div class="price-per" data-ru="уточняй в личке" data-en="ask in DM">уточняй в личке</div>
+                <a href="https://t.me/Yanwec" class="btn-buy" data-ru="Узнать цену" data-en="Ask Price">Узнать цену</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Вопросы" data-en="FAQ">Вопросы</div>
+            <h2 class="section-title">FAQ</h2>
+            <p class="section-desc"
+               data-ru="Самое частое, что спрашивают в личке"
+               data-en="The most common questions we get in DMs">
+                Самое частое, что спрашивают в личке
+            </p>
+        </div>
+
+        <div class="faq-list reveal" id="faqList"></div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding-top:20px;">
+    <div class="container">
+        <div class="cta reveal">
+            <h2 data-ru="Готов сменить HWID?" data-en="Ready to Change Your HWID?">Готов сменить HWID?</h2>
+            <p data-ru="Скачай v2.7 и получи новый HWID за пару минут. Если что-то пойдёт не так — напиши, разберёмся."
+               data-en="Download v2.7 and get a new HWID in a couple of minutes. If anything goes wrong — just DM us.">
+                Скачай v2.7 и получи новый HWID за пару минут. Если что-то пойдёт не так — напиши, разберёмся.
+            </p>
+            <a href="https://github.com/SanyaUwU/spoofer/releases/download/v2.7/ByGoneSpoofer.exe" class="btn-primary" style="display:inline-flex;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span data-ru="Скачать спуфер" data-en="Download Spoofer">Скачать спуфер</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACTS -->
+<section class="section" id="contacts" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Контакты" data-en="Contacts">Контакты</div>
+            <h2 class="section-title" data-ru="Связь с нами" data-en="Contact Us">Связь с нами</h2>
+            <p class="section-desc"
+               data-ru="Покупка, поддержка, сброс привязки ключа"
+               data-en="Purchase, support, key rebinding">
+                Покупка, поддержка, сброс привязки ключа
+            </p>
+        </div>
+
+        <div class="contact-grid reveal">
+            <a href="https://t.me/Yanwec" target="_blank" rel="noopener" class="contact-card">
+                <div class="contact-role">Owner</div>
+                <div class="contact-name">@Yanwec</div>
+            </a>
+            <a href="https://t.me/starsbuyereview" target="_blank" rel="noopener" class="contact-card">
+                <div class="contact-role" data-ru="Канал" data-en="Channel">Канал</div>
+                <div class="contact-name">@starsbuyereview</div>
+            </a>
+            <a href="https://t.me/qweqeqeqe756" target="_blank" rel="noopener" class="contact-card">
+                <div class="contact-role">Reseller</div>
+                <div class="contact-name">@qweqeqeqe756</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <img src="icon.ico" alt="ByGone">
+                <span>ByGone Spoofer</span>
+                <span class="nav-version">v2.7</span>
+            </div>
+            <div class="footer-links">
+                <a href="#new" data-ru="Что нового" data-en="What's New">Что нового</a>
+                <a href="#pricing" data-ru="Цены" data-en="Pricing">Цены</a>
+                <a href="#faq" data-ru="Вопросы" data-en="FAQ">Вопросы</a>
+                <a href="https://t.me/starsbuyereview" target="_blank" rel="noopener">Telegram</a>
+            </div>
+        </div>
+        <div class="footer-copy" data-ru="© 2026 ByGone Spoofer. Все права защищены." data-en="© 2026 ByGone Spoofer. All rights reserved.">
+            © 2026 ByGone Spoofer. Все права защищены.
+        </div>
+    </div>
+</footer>
+
+<div class="to-top" id="toTop">
+    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const DOWNLOAD_URL = 'https://github.com/SanyaUwU/spoofer/releases/download/v2.7/ByGoneSpoofer.exe';
+
+/* ===== ДАННЫЕ ===== */
+
+const NEW_FEATURES = [
+    {
+        badge: 'SMBIOS',
+        icon: '<path d="M9 3H15V5H9V3M17 5H21V19H17V5M3 5H7V13H3V5M3 15H7V19H3V15M9 11H15V19H9V11Z"/>',
+        ru: { t: 'Полный спуф материнской платы', d: 'Раньше менялся только System Serial. Теперь подменяются все поля SMBIOS: BaseBoardSerialNumber, BaseBoardProduct, BaseBoardManufacturer, BIOSVersion, BIOSReleaseDate и другие.' },
+        en: { t: 'Full Motherboard Spoof', d: 'Previously only System Serial was changed. Now every SMBIOS field is rewritten: BaseBoardSerialNumber, BaseBoardProduct, BaseBoardManufacturer, BIOSVersion, BIOSReleaseDate and more.' }
+    },
+    {
+        badge: 'HISTORY',
+        icon: '<path d="M13 3A9 9 0 0 0 4 12H1L4.89 15.89L8.79 12H6A7 7 0 0 1 13 5A7 7 0 1 1 6 12"/><path d="M12 8V12L15 14"/>',
+        ru: { t: 'История спуфа не теряется', d: 'Журнал переехал в HKLM плюс файл на диске. Раньше он жил в HKCU и стирался при выходе из аккаунта. Теперь видно, когда и что спуфнулось — даже после перезагрузки.' },
+        en: { t: 'Spoof History Persists', d: 'The journal now lives in HKLM plus a file on disk. It used to sit in HKCU and got wiped on logout. Now you see what was spoofed and when — even after a reboot.' }
+    },
+    {
+        badge: 'AI',
+        icon: '<circle cx="12" cy="12" r="9"/><path d="M11 7V13H17V11H13V7H11M7 11V13H9V11H7Z"/>',
+        ru: { t: 'ByGoneSpoofer AI', d: 'Встроенный ИИ-помощник прямо в программе. Знает болячки 9 популярных матплат (MSI, ASRock, Gigabyte, ASUS, Dell, Lenovo, HP, Biostar, виртуалки) и подсказывает решение под твоё железо.' },
+        en: { t: 'ByGoneSpoofer AI', d: 'A built-in AI assistant right inside the app. It knows the quirks of 9 popular motherboards (MSI, ASRock, Gigabyte, ASUS, Dell, Lenovo, HP, Biostar, virtual machines) and suggests a fix for your hardware.' }
+    },
+    {
+        badge: 'STATUS',
+        icon: '<path d="M22 11.08V12A10 10 0 1 1 12 2"/><polyline points="22 4 12 14.01 9 11.01"/>',
+        ru: { t: 'Честные статусы железа', d: 'Больше нет ложных «НЕ СПУФНУТО». Каждая строка сверяется с реальным значением в системе. Появились статусы «ПОСЛЕ РЕБУТА» и «ЖЕЛЕЗО».' },
+        en: { t: 'Honest Hardware Statuses', d: 'No more false "NOT SPOOFED" labels. Every row is checked against the actual value in the system. New statuses: "AFTER REBOOT" and "HARDWARE".' }
+    },
+    {
+        badge: 'GAMES',
+        icon: '<rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 10V14M5 12H9M15.5 11H16M17.5 13H18"/>',
+        ru: { t: 'Выбор игры перед спуфом', d: 'Семь вариантов: RUST, GTA RP / FiveM, MAJESTIC RP, CS2, Apex Legends, VALORANT и универсальный. У каждой игры — своя инструкция под её античит.' },
+        en: { t: 'Pick Your Game First', d: 'Seven options: RUST, GTA RP / FiveM, MAJESTIC RP, CS2, Apex Legends, VALORANT and a universal one. Each game has its own guide for its anti-cheat.' }
+    },
+    {
+        badge: 'FSCTL',
+        icon: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+        ru: { t: 'Volume Serial без сторонних exe', d: 'Меняется родным FSCTL_SET_VOLUME_INFORMATION через DeviceIoControl. Метка тома не сбрасывается, сторонние утилиты не скачиваются.' },
+        en: { t: 'Volume Serial Without External EXE', d: 'Changed via the native FSCTL_SET_VOLUME_INFORMATION through DeviceIoControl. The volume label stays, no third-party tools downloaded.' }
+    },
+    {
+        badge: 'CLEAN',
+        icon: '<path d="M19 4H15.5L14.5 3H9.5L8.5 4H5V6H19M6 19A2 2 0 0 0 8 21H16A2 2 0 0 0 18 19V7H6V19Z"/>',
+        ru: { t: 'Очистка логов стала глубже', d: 'Добавлена зачистка следов самого спуфера: ветки реестра, ProgramData, RunMRU, Jump Lists, Shellbags, AppCompat, BAM/DAM, индекс поиска. Файлы перезаписываются 3 проходами.' },
+        en: { t: 'Deeper Log Cleanup', d: 'Now also cleans the spoofer\'s own traces: registry branches, ProgramData, RunMRU, Jump Lists, Shellbags, AppCompat, BAM/DAM, search index. Files are overwritten with 3 passes.' }
+    },
+    {
+        badge: 'SECURITY',
+        icon: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7A5 5 0 0 1 17 7V11"/>',
+        ru: { t: 'Защита лицензии', d: 'Ключ привязан к железу, офлайн-режим до 12 часов, состояние подписано HMAC. Подделать LIFETIME в реестре больше нельзя.' },
+        en: { t: 'License Protection', d: 'Key is bound to hardware, offline mode up to 12 hours, state is HMAC-signed. Forging LIFETIME in the registry no longer works.' }
+    }
+];
+
+const SPOOF_TABS = [
+    {
+        title: { ru: 'Реестр', en: 'Registry' },
+        icon: '<path d="M4 7V4H16V7M9 20H15M12 4V20"/>',
+        desc: { ru: 'Системные идентификаторы Windows', en: 'Windows system identifiers' },
+        items: [
+            { ru: '<code>MachineGuid</code> — глобальный GUID машины', en: '<code>MachineGuid</code> — global machine GUID' },
+            { ru: '<code>ProductId</code> — ID установленной Windows', en: '<code>ProductId</code> — installed Windows ID' },
+            { ru: '<code>HwProfileGuid</code> — GUID профиля оборудования', en: '<code>HwProfileGuid</code> — hardware profile GUID' },
+            { ru: '<code>SusClientId</code> — ID клиента Windows Update', en: '<code>SusClientId</code> — Windows Update client ID' },
+            { ru: '<code>MachineId</code> — ID SQM (телеметрия Microsoft)', en: '<code>MachineId</code> — SQM ID (Microsoft telemetry)' },
+            { ru: '<code>ComputerName</code> / <code>Hostname</code> — имя ПК в сети', en: '<code>ComputerName</code> / <code>Hostname</code> — PC network name' },
+            { ru: '<code>RegisteredOwner</code> / <code>Organization</code> — владелец ОС', en: '<code>RegisteredOwner</code> / <code>Organization</code> — OS owner' },
+            { ru: '<code>InstallDate</code>, <code>BuildGUID</code>, <code>DigitalProductId</code>', en: '<code>InstallDate</code>, <code>BuildGUID</code>, <code>DigitalProductId</code>' }
+        ]
+    },
+    {
+        title: { ru: 'Материнская плата', en: 'Motherboard' },
+        icon: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1V4M15 1V4M9 20V23M15 20V23M20 9H23M20 15H23M1 9H4M1 15H4"/>',
+        desc: { ru: 'SMBIOS-таблица — то, что читают античиты', en: 'SMBIOS table — what anti-cheats read' },
+        items: [
+            { ru: '<code>SystemSerialNumber</code> — серийник системника', en: '<code>SystemSerialNumber</code> — system serial' },
+            { ru: '<code>BaseBoardSerialNumber</code> — серийник матплаты', en: '<code>BaseBoardSerialNumber</code> — motherboard serial' },
+            { ru: '<code>SystemProductName</code> / <code>BaseBoardProduct</code> — модель', en: '<code>SystemProductName</code> / <code>BaseBoardProduct</code> — model' },
+            { ru: '<code>SystemManufacturer</code> / <code>BaseBoardManufacturer</code>', en: '<code>SystemManufacturer</code> / <code>BaseBoardManufacturer</code>' },
+            { ru: '<code>BIOSVersion</code>, <code>BIOSReleaseDate</code>, <code>SystemVersion</code>', en: '<code>BIOSVersion</code>, <code>BIOSReleaseDate</code>, <code>SystemVersion</code>' },
+            { ru: '<code>ComputerHardwareId</code> — пересобирается заново', en: '<code>ComputerHardwareId</code> — rebuilt from scratch' }
+        ]
+    },
+    {
+        title: { ru: 'Сеть', en: 'Network' },
+        icon: '<path d="M12 21L15.5 16.5C13.5 14.5 10.5 14.5 8.5 16.5L12 21M12 3C7.46 3 3.34 4.78 0.29 7.67L2.7 10.08C5.22 7.73 8.46 6.5 12 6.5C15.54 6.5 18.78 7.73 21.3 10.08L23.71 7.67C20.66 4.78 16.54 3 12 3M12 12C10.07 12 8.32 12.74 6.93 14.07L9.41 16.55C10.23 15.78 11.58 15.78 12.4 16.55L14.88 14.07C13.49 12.74 11.93 12 12 12Z"/>',
+        desc: { ru: 'Адреса адаптеров и сетевой стек', en: 'Adapter addresses and the network stack' },
+        items: [
+            { ru: 'MAC-адреса на всех физических адаптерах', en: 'MAC addresses on all physical adapters' },
+            { ru: 'Локально-администрируемый бит ставится корректно', en: 'Locally-administered bit set correctly' },
+            { ru: 'Сброс DNS-кэша и ARP-таблицы', en: 'DNS cache and ARP table reset' },
+            { ru: 'Виртуальные адаптеры (VPN, Hyper-V) не трогаются', en: 'Virtual adapters (VPN, Hyper-V) are skipped' },
+            { ru: 'Адаптеры перезапускаются автоматически', en: 'Adapters are restarted automatically' }
+        ]
+    },
+    {
+        title: { ru: 'Диски и TPM', en: 'Disks & TPM' },
+        icon: '<path d="M22 12H2M5.45 5.11L2 12V18A2 2 0 0 0 4 20H20A2 2 0 0 0 22 18V12L18.55 5.11A2 2 0 0 0 16.76 4H7.24A2 2 0 0 0 5.45 5.11Z"/><path d="M6 16H6.01M10 16H10.01"/>',
+        desc: { ru: 'Serial тома и состояние модуля доверия', en: 'Volume serial and trusted module state' },
+        items: [
+            { ru: '<code>Volume Serial</code> через FSCTL — метка тома не сбрасывается', en: '<code>Volume Serial</code> via FSCTL — volume label preserved' },
+            { ru: 'TPM-служба и политика <code>UseTPM</code> отключаются', en: 'TPM service and <code>UseTPM</code> policy are disabled' },
+            { ru: '<code>OwnerAuth</code> перезаписывается', en: '<code>OwnerAuth</code> is overwritten' },
+            { ru: 'Откат возвращает <code>Start=2</code>, <code>UseTPM=1</code>', en: 'Rollback restores <code>Start=2</code>, <code>UseTPM=1</code>' }
+        ]
+    },
+    {
+        title: { ru: 'Региональные ID', en: 'Regional IDs' },
+        icon: '<circle cx="12" cy="12" r="10"/><path d="M2 12H22M12 2A15.3 15.3 0 0 1 12 22A15.3 15.3 0 0 1 12 2Z"/>',
+        desc: { ru: 'То, что античиты читают рядом с UserID', en: 'What anti-cheats read next to the UserID' },
+        items: [
+            { ru: '<code>TimeZoneKeyName</code> — часовой пояс', en: '<code>TimeZoneKeyName</code> — time zone' },
+            { ru: '<code>NLS\\Language</code> — языковые настройки', en: '<code>NLS\\Language</code> — language settings' },
+            { ru: '<code>Locale</code> — локаль пользователя', en: '<code>Locale</code> — user locale' },
+            { ru: '<code>DefaultUserName</code> — имя пользователя', en: '<code>DefaultUserName</code> — user name' }
+        ]
+    },
+    {
+        title: { ru: 'Очистка следов', en: 'Trace Cleanup' },
+        icon: '<path d="M3 6H21M8 6V4A2 2 0 0 1 10 2H14A2 2 0 0 1 16 4V6M19 6V20A2 2 0 0 1 17 22H7A2 2 0 0 1 5 20V6"/><path d="M10 11V17M14 11V17"/>',
+        desc: { ru: 'Полная зачистка следов активности', en: 'Full cleanup of activity traces' },
+        items: [
+            { ru: 'Event Logs, Prefetch, USN Journal', en: 'Event Logs, Prefetch, USN Journal' },
+            { ru: 'Amcache, SRUM, WER, Crash Dumps', en: 'Amcache, SRUM, WER, Crash Dumps' },
+            { ru: 'Recent, Jump Lists, LNK, ThumbCache', en: 'Recent, Jump Lists, LNK, ThumbCache' },
+            { ru: 'Следы самого спуфера: реестр, ProgramData, Shellbags', en: 'The spoofer\'s own traces: registry, ProgramData, Shellbags' },
+            { ru: 'Файлы перезаписываются 3 проходами перед удалением', en: 'Files overwritten with 3 passes before deletion' }
+        ]
+    }
+];
+
+const GAMES = [
+    { name: 'RUST', ac: 'Easy Anti-Cheat', color: '#888888', bg: 'rgba(136,136,136,0.14)' },
+    { name: 'GTA V / GTA RP', ac: 'FiveM, RAGE MP', color: '#aaaaaa', bg: 'rgba(170,170,170,0.14)' },
+    { name: 'MAJESTIC RP', ac: 'RAGE Multiplayer', color: '#cccccc', bg: 'rgba(200,200,200,0.14)' },
+    { name: 'CS2 / CS:GO', ac: 'VAC / VAC Live', color: '#bbbbbb', bg: 'rgba(187,187,187,0.14)' },
+    { name: 'Apex Legends', ac: 'Easy Anti-Cheat', color: '#888888', bg: 'rgba(136,136,136,0.14)' },
+    { name: 'VALORANT', ac: 'Vanguard', color: '#888888', bg: 'rgba(136,136,136,0.14)' },
+    { name: 'Другая / универсально', ac: 'Универсальный', color: '#6b6b6b', bg: 'rgba(255,255,255,0.07)' }
+];
+
+const FAQ = [
+    {
+        q: { ru: 'Почему после перезагрузки статусы показывают «НЕ СПУФНУТО»?', en: 'Why do statuses show "NOT SPOOFED" after a reboot?' },
+        a: { ru: 'Две причины. Первая — спуф не применился: запусти спуфер от администратора. Вторая — прошивка вернула SMBIOS: так бывает на Dell, ASUS ROG и в виртуалках, гипервизор генерирует таблицу заново при каждом старте. Теперь такие поля помечаются «защищено прошивкой», а не красным «НЕ СПУФНУТО».',
+             en: 'Two reasons. First — the spoof did not apply: run the spoofer as administrator. Second — the firmware reverted SMBIOS: this happens on Dell, ASUS ROG and in virtual machines, where the hypervisor regenerates the table on every boot. Such fields are now marked "protected by firmware" instead of a red "NOT SPOOFED".' }
+    },
+    {
+        q: { ru: 'Почему бан возвращается через несколько дней?', en: 'Why does the ban come back after a few days?' },
+        a: { ru: 'Античит подхватил тебя по вторичным признакам: IP, аккаунт, cookie браузера, поведенческий паттерн. HWID — только одна из точек. Смени аккаунт, IP и не заходи на тот же сервер с тем же ником. Если у игры kernel-античит (Vanguard) — user-mode спуфер там работает ограниченно.',
+             en: 'The anti-cheat caught you via secondary signals: IP, account, browser cookies, behavioural pattern. HWID is only one of the points. Change your account, IP, and do not join the same server with the same nickname. If the game has a kernel anti-cheat (Vanguard), a user-mode spoofer has limited effect there.' }
+    },
+    {
+        q: { ru: 'Нужно ли отключать антивирус?', en: 'Do I need to disable antivirus?' },
+        a: { ru: 'Не обязательно, но возможны помехи: антивирус с контролем реестра может вернуть ключи. Добавь спуфер в исключения — этого обычно достаточно. Специально отключать защиту не нужно.',
+             en: 'Not necessary, but interference is possible: antivirus with registry protection may revert keys. Add the spoofer to exclusions — that is usually enough. You do not need to fully disable protection.' }
+    },
+    {
+        q: { ru: 'Безопасно ли запускать на основном ПК?', en: 'Is it safe to run on my main PC?' },
+        a: { ru: 'Спуфер работает с реестром и сетевыми адаптерами, не трогает драйверы, не пишет в прошивку BIOS. Перед спуфом создаётся точка восстановления, все изменения обратимы через «Полный откат». Не запускай спуф во время обновления Windows.',
+             en: 'The spoofer works with the registry and network adapters. It does not touch drivers and does not write to the BIOS firmware. A restore point is created before spoofing, and all changes are reversible via "Full Rollback". Do not run the spoofer during a Windows update.' }
+    },
+    {
+        q: { ru: 'Почему ключ привязан к одному ПК?', en: 'Why is the key bound to one PC?' },
+        a: { ru: 'Привязка по HWID-отпечатку защищает от шаринга и перепродажи. Сменил железо или переустановил Windows — напиши @Yanwec, сбросим привязку. Не пытайся обойти сам: ключ уйдёт в бан.',
+             en: 'HWID-based binding protects against sharing and reselling. Changed hardware or reinstalled Windows? DM @Yanwec and we will reset the binding. Do not try to bypass it yourself — the key gets banned.' }
+    },
+    {
+        q: { ru: 'Работает ли спуфер в виртуальной машине?', en: 'Does the spoofer work in a virtual machine?' },
+        a: { ru: 'Реестровые ID, MAC и Volume Serial — да. BIOS/SMBIOS — нет: гипервизор выдаёт таблицу заново при каждом старте, и обойти это изнутри гостевой ОС нельзя. Для VM меняй SMBIOS в настройках самой виртуалки.',
+             en: 'Registry IDs, MAC and Volume Serial — yes. BIOS/SMBIOS — no: the hypervisor regenerates the table on every boot and there is no way around it from inside the guest OS. For a VM, change SMBIOS in the virtual machine settings instead.' }
+    },
+    {
+        q: { ru: 'Остаются ли следы после очистки?', en: 'Are there any traces left after cleanup?' },
+        a: { ru: 'Очистка проходит по Event Logs, Prefetch, USN Journal, Amcache, SRUM, Recent, Jump Lists, индексу поиска и собственным следам спуфера. Реестровые ветки удаляются, файлы перезаписываются 3 проходами и переименовываются, чтобы не осталось имени в MFT.',
+             en: 'Cleanup covers Event Logs, Prefetch, USN Journal, Amcache, SRUM, Recent, Jump Lists, the search index and the spoofer\'s own traces. Registry branches are removed, files are overwritten with 3 passes and renamed so no name remains in the MFT.' }
+    }
+];
+
+/* ===== i18n ===== */
+let currentLang = 'ru';
+
+function applyLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-ru][data-en]').forEach(el => {
+        const val = el.getAttribute('data-' + lang);
+        if (val) el.textContent = val;
+    });
+    document.querySelectorAll('.lang-label').forEach(el => {
+        el.classList.toggle('on', el.dataset.lang === lang);
+    });
+    document.getElementById('langThumb').classList.toggle('en', lang === 'en');
+    renderNew();
+    renderSpoof();
+    renderGames();
+    renderFaq();
+    try { localStorage.setItem('bygone-lang', lang); } catch (e) {}
+}
+
+/* ===== RENDER ===== */
+function renderNew() {
+    const grid = document.getElementById('newGrid');
+    grid.innerHTML = NEW_FEATURES.map((f, i) => `
+        <div class="new-card reveal" style="transition-delay:${i * 45}ms">
+            <div class="new-badge">${f.badge}</div>
+            <div class="new-icon"><svg viewBox="0 0 24 24">${f.icon}</svg></div>
+            <h3>${f[currentLang].t}</h3>
+            <p>${f[currentLang].d}</p>
+        </div>
+    `).join('');
+    observeReveal();
+}
+
+let activeTab = 0;
+
+function renderSpoof() {
+    const tabs = document.getElementById('spoofTabs');
+    const panel = document.getElementById('spoofPanel');
+
+    tabs.innerHTML = SPOOF_TABS.map((t, i) => `
+        <button class="tab ${i === activeTab ? 'active' : ''}" data-i="${i}" type="button">
+            <span class="tab-dot"></span>
+            <span>${t.title[currentLang]}</span>
+            <span class="tab-count">${t.items.length}</span>
+        </button>
+    `).join('');
+
+    tabs.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            activeTab = Number(btn.dataset.i);
+            renderSpoof();
+        });
+    });
+
+    const t = SPOOF_TABS[activeTab];
+    panel.innerHTML = `
+        <div class="spoof-panel-head">
+            <div class="spoof-panel-icon"><svg viewBox="0 0 24 24">${t.icon}</svg></div>
+            <h3>${t.title[currentLang]}</h3>
+        </div>
+        <p class="spoof-panel-desc">${t.desc[currentLang]}</p>
+        <ul class="item-list">
+            ${t.items.map(it => `
+                <li>
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>${it[currentLang]}</span>
+                </li>
+            `).join('')}
+        </ul>
+    `;
+}
+
+function renderGames() {
+    const grid = document.getElementById('gamesGrid');
+    grid.innerHTML = GAMES.map(g => `
+        <div class="game-chip">
+            <div class="game-icon" style="background:${g.bg};color:${g.color}">
+                ${g.name.charAt(0)}
+            </div>
+            <div>
+                <div class="game-name">${g.name}</div>
+                <div class="game-ac">${g.ac}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderFaq() {
+    const list = document.getElementById('faqList');
+    list.innerHTML = FAQ.map((f, i) => `
+        <div class="faq-item" data-i="${i}">
+            <button class="faq-q" type="button">
+                <span>${f.q[currentLang]}</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-a">
+                <div class="faq-a-inner">${f.a[currentLang]}</div>
+            </div>
+        </div>
+    `).join('');
+
+    list.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.parentElement;
+            const answer = item.querySelector('.faq-a');
+            const isOpen = item.classList.contains('open');
+
+            list.querySelectorAll('.faq-item').forEach(other => {
+                other.classList.remove('open');
+                other.querySelector('.faq-a').style.maxHeight = null;
+            });
+
+            if (!isOpen) {
+                item.classList.add('open');
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+        });
+    });
+}
+
+/* ===== FLOATING LINES ===== */
+(function initLines() {
+    const wrap = document.getElementById('bgLines');
+    if (!wrap) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const COUNT = 14;
+    for (let i = 0; i < COUNT; i++) {
+        const span = document.createElement('span');
+        const len = 90 + Math.random() * 220;
+        span.style.left = (Math.random() * 100) + '%';
+        span.style.height = len + 'px';
+        span.style.top = '0';
+        span.style.animationDuration = (9 + Math.random() * 14) + 's';
+        span.style.animationDelay = (-Math.random() * 20) + 's';
+        span.style.opacity = (0.25 + Math.random() * 0.5).toString();
+        wrap.appendChild(span);
+    }
+})();
+
+/* ===== MOUSE GLOW ===== */
+(function initGlow() {
+    const glow = document.getElementById('bgGlow');
+    if (!glow) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0, active = false;
+
+    document.addEventListener('mousemove', (e) => {
+        tx = e.clientX;
+        ty = e.clientY;
+        if (!active) {
+            cx = tx; cy = ty;
+            active = true;
+            glow.classList.add('on');
+        }
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', () => {
+        active = false;
+        glow.classList.remove('on');
+    });
+
+    (function loop() {
+        cx += (tx - cx) * 0.08;
+        cy += (ty - cy) * 0.08;
+        glow.style.transform = `translate3d(${cx - 260}px, ${cy - 260}px, 0)`;
+        requestAnimationFrame(loop);
+    })();
+})();
+
+/* ===== PARALLAX ===== */
+(function initParallax() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const orbs = document.querySelectorAll('.orb');
+    const shapes = document.querySelectorAll('.shape');
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            const y = window.scrollY;
+            orbs.forEach((o, i) => {
+                const speed = 0.04 + i * 0.025;
+                o.style.setProperty('--px', `translateY(${y * speed}px)`);
+                o.style.translate = `0 ${y * speed}px`;
+            });
+            shapes.forEach((s, i) => {
+                const speed = 0.06 + (i % 3) * 0.04;
+                s.style.marginTop = (y * speed * -1) + 'px';
+            });
+            ticking = false;
+        });
+    }, { passive: true });
+})();
+/* ===== PARTICLES ===== */
+(function initParticles() {
+    const canvas = document.getElementById('particles');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let w, h, particles;
+    const COUNT = 70;
+    const LINK_DIST = 130;
+
+    function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    }
+
+    function make() {
+        particles = Array.from({ length: COUNT }, () => ({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: 0.8 + Math.random() * 1.8,
+            vx: (Math.random() - 0.5) * 0.26,
+            vy: -0.10 - Math.random() * 0.3,
+            a: 0.12 + Math.random() * 0.35
+        }));
+    }
+
+    let raf;
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.y < -12) { p.y = h + 12; p.x = Math.random() * w; }
+            if (p.x < -12) p.x = w + 12;
+            if (p.x > w + 12) p.x = -12;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+            ctx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                const q = particles[j];
+                const dx = p.x - q.x;
+                const dy = p.y - q.y;
+                const dist = dx * dx + dy * dy;
+
+                if (dist < LINK_DIST * LINK_DIST) {
+                    const alpha = (1 - Math.sqrt(dist) / LINK_DIST) * 0.14;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(q.x, q.y);
+                    ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        raf = requestAnimationFrame(draw);
+    }
+
+    resize();
+    make();
+    draw();
+
+    let t;
+    window.addEventListener('resize', () => {
+        clearTimeout(t);
+        t = setTimeout(() => { resize(); make(); }, 180);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else draw();
+    });
+})();
+
+/* ===== REVEAL ===== */
+let revealObserver;
+
+function observeReveal() {
+    if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+        return;
+    }
+
+    if (!revealObserver) {
+        revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('in');
+                    revealObserver.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+    }
+
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => revealObserver.observe(el));
+}
+
+/* ===== COUNTERS ===== */
+function animateCounters() {
+    document.querySelectorAll('[data-count]').forEach(el => {
+        if (el.dataset.done) return;
+
+        const rect = el.getBoundingClientRect();
+        if (rect.top > window.innerHeight) return;
+
+        el.dataset.done = '1';
+        const target = Number(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        const dur = 1100;
+        const start = performance.now();
+
+        function step(now) {
+            const p = Math.min((now - start) / dur, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    });
+}
+
+/* ===== NAV ===== */
+const nav = document.getElementById('navbar');
+const toTop = document.getElementById('toTop');
+const sections = Array.from(document.querySelectorAll('section[id], .hero[id]'));
+
+function onScroll() {
+    const y = window.scrollY;
+
+    nav.classList.toggle('scrolled', y > 40);
+    toTop.classList.toggle('show', y > 500);
+
+    let current = '';
+    for (const s of sections) {
+        if (s.offsetTop - 140 <= y) current = s.id;
+    }
+    document.querySelectorAll('.nav-links a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+
+    animateCounters();
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
+
+toTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ===== LANG ===== */
+document.getElementById('langToggle').addEventListener('click', () => {
+    applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
+});
+
+/* ===== MOBILE MENU ===== */
+document.getElementById('burger').addEventListener('click', () => {
+    const links = document.querySelector('.nav-links');
+    if (links.style.display === 'flex') {
+        links.style.display = '';
+    } else {
+        links.style.display = 'flex';
+        links.style.position = 'absolute';
+        links.style.top = '64px';
+        links.style.left = '0';
+        links.style.right = '0';
+        links.style.flexDirection = 'column';
+        links.style.background = 'rgba(5,5,5,0.98)';
+        links.style.border = '1px solid rgba(255,255,255,0.08)';
+        links.style.borderRadius = '14px';
+        links.style.padding = '10px';
+        links.style.zIndex = '1001';
+    }
+});
+
+document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => {
+        if (window.innerWidth <= 960) {
+            const links = document.querySelector('.nav-links');
+            links.style.display = '';
+            links.removeAttribute('style');
+            links.style.display = '';
+        }
+    });
+});
+
+/* ===== TOAST ===== */
+let toastTimer;
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ===== INIT ===== */
+(function init() {
+    let saved = 'ru';
+    try { saved = localStorage.getItem('bygone-lang') || 'ru'; } catch (e) {}
+
+    applyLanguage(saved);
+    observeReveal();
+    onScroll();
+
+    window.addEventListener('resize', observeReveal);
+
+    // Открыть первый FAQ по умолчанию
+    setTimeout(() => {
+        const first = document.querySelector('.faq-item');
+        if (first) {
+            first.classList.add('open');
+            const a = first.querySelector('.faq-a');
+            a.style.maxHeight = a.scrollHeight + 'px';
+        }
+    }, 300);
+})();
+</script>
+
+</body>
+</html>
