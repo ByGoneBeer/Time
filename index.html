@@ -54,7 +54,6 @@ body {
 
 ::selection { background: rgba(255,255,255,0.3); color: #fff; }
 
-/* ===== BACKGROUND ===== */
 .bg-wrap {
     position: fixed;
     inset: 0;
@@ -67,11 +66,25 @@ body {
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+        linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 95% 75% at 50% 40%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 95% 75% at 50% 40%, #000 30%, transparent 100%);
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 100% 80% at 50% 35%, #000 20%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 35%, #000 20%, transparent 85%);
 }
 
 .orb {
@@ -109,7 +122,6 @@ body {
     50% { transform: translate(-52px,48px) scale(0.92); }
 }
 
-/* ===== FLOATING SHAPES ===== */
 .bg-shapes {
     position: absolute;
     inset: 0;
@@ -173,7 +185,6 @@ body {
     }
 }
 
-/* ===== CONNECTING LINES ===== */
 .bg-lines {
     position: absolute;
     inset: 0;
@@ -195,7 +206,6 @@ body {
     100% { transform: translateY(100vh); opacity: 0; }
 }
 
-/* ===== MOUSE GLOW ===== */
 .bg-glow {
     position: absolute;
     width: 520px;
@@ -211,7 +221,6 @@ body {
 
 .bg-glow.on { opacity: 1; }
 
-/* ===== VIGNETTE ===== */
 .bg-vignette {
     position: absolute;
     inset: 0;
@@ -230,7 +239,6 @@ body {
     height: 100%;
 }
 
-/* ===== NAVBAR ===== */
 .nav-wrap {
     position: fixed;
     top: 18px;
@@ -407,7 +415,6 @@ body {
     transition: all 0.25s;
 }
 
-/* ===== LAYOUT ===== */
 main, .hero, footer {
     position: relative;
     z-index: 1;
@@ -419,7 +426,6 @@ main, .hero, footer {
     padding: 0 24px;
 }
 
-/* ===== HERO ===== */
 .hero {
     padding: 165px 0 90px;
     text-align: center;
@@ -562,7 +568,6 @@ main, .hero, footer {
     transform: translateY(-3px);
 }
 
-/* Hero stats */
 .hero-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -602,7 +607,6 @@ main, .hero, footer {
     margin-top: 5px;
 }
 
-/* ===== SECTIONS ===== */
 .section {
     padding: 92px 0;
 }
@@ -637,7 +641,6 @@ main, .hero, footer {
     margin: 0 auto;
 }
 
-/* ===== NEW IN 2.8 ===== */
 .new-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -733,7 +736,6 @@ main, .hero, footer {
     line-height: 1.65;
 }
 
-/* ===== SPOOF LIST ===== */
 .spoof-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -893,7 +895,6 @@ main, .hero, footer {
     border-radius: 4px;
 }
 
-/* ===== PRICING ===== */
 .price-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -1021,7 +1022,6 @@ main, .hero, footer {
     box-shadow: 0 12px 34px rgba(255,255,255,0.20);
 }
 
-/* ===== GAMES ===== */
 .games-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -1070,7 +1070,6 @@ main, .hero, footer {
     font-weight: 600;
 }
 
-/* ===== STEPS ===== */
 .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1119,7 +1118,6 @@ main, .hero, footer {
     line-height: 1.65;
 }
 
-/* ===== FAQ ===== */
 .faq-list {
     max-width: 880px;
     margin: 0 auto;
@@ -1203,7 +1201,6 @@ main, .hero, footer {
     line-height: 1.75;
 }
 
-/* ===== CONTACTS ===== */
 .contact-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -1246,7 +1243,6 @@ main, .hero, footer {
     letter-spacing: -0.3px;
 }
 
-/* ===== CTA ===== */
 .cta {
     text-align: center;
     padding: 72px 36px;
@@ -1281,7 +1277,6 @@ main, .hero, footer {
     margin-right: auto;
 }
 
-/* ===== FOOTER ===== */
 footer {
     padding: 52px 0 40px;
     border-top: 1px solid var(--border);
@@ -1336,7 +1331,6 @@ footer {
     border-top: 1px solid rgba(255,255,255,0.04);
 }
 
-/* ===== REVEAL ===== */
 .reveal {
     opacity: 0;
     transform: translateY(26px);
@@ -1348,7 +1342,6 @@ footer {
     transform: translateY(0);
 }
 
-/* ===== BACK TO TOP ===== */
 .to-top {
     position: fixed;
     bottom: 26px;
@@ -1391,7 +1384,6 @@ footer {
     stroke-linejoin: round;
 }
 
-/* ===== TOAST ===== */
 .toast {
     position: fixed;
     bottom: 26px;
@@ -1416,7 +1408,6 @@ footer {
     transform: translate(-50%, 0);
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 960px) {
     .nav-links { display: none; }
     .nav-burger { display: flex; }
@@ -1448,6 +1439,272 @@ footer {
     .to-top { bottom: 16px; right: 16px; width: 40px; height: 40px; }
     .hero-btns { flex-direction: column; }
     .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+}
+
+.price-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.btn-benefits {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.btn-benefits svg {
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.btn-benefits:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.32);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgba(0,0,0,0.5);
+}
+
+.btn-benefits:hover svg {
+    transform: translateY(3px);
+}
+
+.benefit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    max-width: 1160px;
+    margin: 0 auto;
+}
+
+.benefit-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 24px;
+    border-radius: 18px;
+    background: linear-gradient(165deg, rgba(14,14,14,0.92), rgba(5,5,5,0.96));
+    border: 1px solid var(--border);
+    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.benefit-card::before {
+    content: none;
+}
+
+.benefit-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,255,255,0.22);
+    box-shadow: 0 24px 50px rgba(0,0,0,0.55);
+}
+
+.benefit-card.featured {
+    border-color: rgba(255,255,255,0.3);
+    background: linear-gradient(165deg, rgba(255,255,255,0.07), rgba(200,200,200,0.04) 55%, rgba(5,5,5,0.97));
+    box-shadow: 0 0 44px rgba(255,255,255,0.09);
+}
+
+.benefit-card.featured::before {
+    content: none;
+}
+
+.benefit-card.lifetime {
+    border-color: rgba(255,255,255,0.38);
+    background: linear-gradient(165deg, rgba(255,255,255,0.11), rgba(210,210,210,0.06) 50%, rgba(5,5,5,0.97));
+    box-shadow: 0 0 56px rgba(255,255,255,0.13);
+}
+
+.benefit-card.lifetime::before {
+    content: none;
+}
+
+.benefit-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: var(--grad);
+    color: #000;
+}
+
+.benefit-tag.lifetime-tag {
+    background: var(--grad);
+    color: #000;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.benefit-head {
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.benefit-dur {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 2.4px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.benefit-card.featured .benefit-dur,
+.benefit-card.lifetime .benefit-dur {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.benefit-price {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -1.4px;
+    color: var(--text);
+    line-height: 1;
+}
+
+.benefit-price span {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--dim);
+    margin-left: 3px;
+}
+
+.benefit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    flex: 1;
+}
+
+.benefit-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 11px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+.benefit-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.22);
+}
+
+.benefit-list li::after {
+    content: '';
+    position: absolute;
+    left: 4.5px;
+    top: 9px;
+    width: 5px;
+    height: 2.5px;
+    border-left: 1.6px solid #fff;
+    border-bottom: 1.6px solid #fff;
+    transform: rotate(-45deg);
+}
+
+.benefit-list li.muted {
+    color: var(--dim);
+}
+
+.benefit-list li.muted::before {
+    background: transparent;
+    border-color: rgba(255,255,255,0.12);
+}
+
+.benefit-list li.muted::after {
+    border-color: rgba(255,255,255,0.3);
+}
+
+.benefit-sold {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.sold-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    animation: soldPulse 2s ease-in-out infinite;
+}
+
+@keyframes soldPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+.btn-benefit {
+    display: block;
+    width: 100%;
+    padding: 13px 0;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.14);
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+.btn-benefit:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.34);
+    transform: translateY(-2px);
+}
+
+.btn-benefit.primary {
+    background: var(--grad);
+    color: #000;
+    border-color: transparent;
+    box-shadow: 0 10px 26px rgba(255,255,255,0.16);
+}
+
+.btn-benefit.primary:hover {
+    box-shadow: 0 16px 36px rgba(255,255,255,0.26);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+    .benefit-grid { grid-template-columns: 1fr; }
+    .btn-benefits { font-size: 12.5px; padding: 13px 20px; text-align: center; }
 }
 </style>
 </head>
@@ -1551,7 +1808,6 @@ footer {
 
 <main>
 
-<!-- NEW IN 2.8 -->
 <section class="section" id="new">
     <div class="container">
         <div class="section-head reveal">
@@ -1568,7 +1824,6 @@ footer {
     </div>
 </section>
 
-<!-- WHAT IT CHANGES -->
 <section class="section" id="spoof" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1588,7 +1843,6 @@ footer {
     </div>
 </section>
 
-<!-- GAMES -->
 <section class="section" id="games" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1605,7 +1859,6 @@ footer {
     </div>
 </section>
 
-<!-- STEPS -->
 <section class="section" id="how" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1646,7 +1899,6 @@ footer {
     </div>
 </section>
 
-<!-- PRICING -->
 <section class="section" id="pricing" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1682,14 +1934,103 @@ footer {
             <div class="price-card">
                 <div class="price-dur" data-ru="Бессрочно" data-en="Lifetime">Бессрочно</div>
                 <div class="price-val" data-ru="LIFETIME" data-en="LIFETIME">LIFETIME</div>
-                <div class="price-per" data-ru="уточняй в личке" data-en="ask in DM">уточняй в личке</div>
+                <div class="price-per" data-ru="5000₽" data-en="ask in DM">5000₽</div>
                 <a href="https://t.me/Yanwec" class="btn-buy" data-ru="Узнать цену" data-en="Ask Price">Узнать цену</a>
+            </div>
+        </div>
+
+        <div class="price-more reveal">
+            <a href="#benefits" class="btn-benefits">
+                <span data-ru="Что входит в подписку — сравнение тарифов" data-en="What's included — plan comparison">Что входит в подписку — сравнение тарифов</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="benefits" style="padding-top:20px;">
+    <div class="container">
+        <div class="section-head reveal">
+            <div class="section-tag" data-ru="Тарифы" data-en="Plans">Тарифы</div>
+            <h2 class="section-title" data-ru="Что входит в каждый тариф" data-en="What Each Plan Includes">Что входит в каждый тариф</h2>
+            <p class="section-desc"
+               data-ru="Чем дольше подписка — тем больше возможностей. Бессрочный тариф раскупают чаще всего."
+               data-en="The longer the plan — the more you get. The lifetime plan is our best seller.">
+                Чем дольше подписка — тем больше возможностей. Бессрочный тариф раскупают чаще всего.
+            </p>
+        </div>
+
+        <div class="benefit-grid reveal">
+            <div class="benefit-card">
+                <div class="benefit-head">
+                    <div class="benefit-dur" data-ru="1 день" data-en="1 Day">1 день</div>
+                    <div class="benefit-price">200<span>₽</span></div>
+                </div>
+                <ul class="benefit-list">
+                    <li data-ru="Полный спуф HWID" data-en="Full HWID spoof">Полный спуф HWID</li>
+                    <li data-ru="Все 8 игр в списке" data-en="All 8 supported games">Все 8 игр в списке</li>
+                    <li data-ru="ИИ-помощник 5 запросов/день" data-en="AI assistant 5 requests/day">ИИ-помощник 5 запросов/день</li>
+                    <li class="muted" data-ru="Поддержка в общем чате" data-en="Support in public chat">Поддержка в общем чате</li>
+                </ul>
+                <a href="https://t.me/Yanwec" class="btn-benefit" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-head">
+                    <div class="benefit-dur" data-ru="7 дней" data-en="7 Days">7 дней</div>
+                    <div class="benefit-price">500<span>₽</span></div>
+                </div>
+                <ul class="benefit-list">
+                    <li data-ru="Всё из тарифа «1 день»" data-en="Everything from 1 Day">Всё из тарифа «1 день»</li>
+                    <li data-ru="ИИ-помощник 10 запросов/день" data-en="AI assistant 10 requests/day">ИИ-помощник 10 запросов/день</li>
+                    <li data-ru="Гайды по обходу под Fortnite и RUST" data-en="Bypass guides for Fortnite and RUST">Гайды по обходу под Fortnite и RUST</li>
+                    <li data-ru="Приоритетная поддержка в личке" data-en="Priority support in DM">Приоритетная поддержка в личке</li>
+                    <li data-ru="Все обновления версии" data-en="All version updates">Все обновления версии</li>
+                </ul>
+                <a href="https://t.me/Yanwec" class="btn-benefit" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+
+            <div class="benefit-card featured">
+                <div class="benefit-tag" data-ru="ВЫГОДНЕЕ ВСЕГО" data-en="BEST VALUE">ВЫГОДНЕЕ ВСЕГО</div>
+                <div class="benefit-head">
+                    <div class="benefit-dur" data-ru="30 дней" data-en="30 Days">30 дней</div>
+                    <div class="benefit-price">1200<span>₽</span></div>
+                </div>
+                <ul class="benefit-list">
+                    <li data-ru="Всё из тарифа «7 дней»" data-en="Everything from 7 Days">Всё из тарифа «7 дней»</li>
+                    <li data-ru="Личная поддержка в Discord" data-en="Personal Discord support">Личная поддержка в Discord</li>
+                    <li data-ru="Помощь с настройкой системы с нуля" data-en="Clean system setup help">Помощь с настройкой системы с нуля</li>
+                    <li data-ru="Разбор бана по логам" data-en="Ban analysis from your logs">Разбор бана по логам</li>
+                </ul>
+                <a href="https://t.me/Yanwec" class="btn-benefit primary" data-ru="Купить" data-en="Buy">Купить</a>
+            </div>
+
+            <div class="benefit-card lifetime">
+                <div class="benefit-tag lifetime-tag" data-ru="БЕССРОЧНО" data-en="LIFETIME">БЕССРОЧНО</div>
+                <div class="benefit-head">
+                    <div class="benefit-dur">LIFETIME</div>
+                    <div class="benefit-price">5000<span>₽</span></div>
+                </div>
+                <ul class="benefit-list">
+                    <li data-ru="Всё из тарифа «30 дней»" data-en="Everything from 30 Days">Всё из тарифа «30 дней»</li>
+                    <li data-ru="Все будущие обновления бесплатно" data-en="All future updates free">Все будущие обновления бесплатно</li>
+                    <li data-ru="ИИ-помощник без ограничений" data-en="AI assistant without limits">ИИ-помощник без ограничений</li>
+                    <li data-ru="Полная поддержка от разработчика в Discord" data-en="Full developer support in Discord">Полная поддержка от разработчика в Discord</li>
+                    <li data-ru="Новые игры сразу в доступ" data-en="New games available instantly">Новые игры сразу в доступ</li>
+                    <li data-ru="Прямой контакт с автором" data-en="Direct contact with the author">Прямой контакт с автором</li>
+                </ul>
+                <div class="benefit-sold">
+                    <span class="sold-dot"></span>
+                    <span data-ru="Уже 4 человека купили" data-en="4 people already bought">Уже 4 человека купили</span>
+                </div>
+                <a href="https://t.me/Yanwec" class="btn-benefit primary" data-ru="Купить" data-en="Buy">Купить</a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- FAQ -->
 <section class="section" id="faq" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1706,7 +2047,6 @@ footer {
     </div>
 </section>
 
-<!-- CTA -->
 <section class="section" style="padding-top:20px;">
     <div class="container">
         <div class="cta reveal">
@@ -1723,7 +2063,6 @@ footer {
     </div>
 </section>
 
-<!-- CONTACTS -->
 <section class="section" id="contacts" style="padding-top:20px;">
     <div class="container">
         <div class="section-head reveal">
@@ -1786,8 +2125,6 @@ footer {
 'use strict';
 
 const DOWNLOAD_URL = 'https://github.com/ByGoneBeer/Time/releases/download/v2.8/ByGoneSpoofer.exe';
-
-/* ===== ДАННЫЕ ===== */
 
 const NEW_FEATURES = [
     {
@@ -1972,7 +2309,6 @@ const FAQ = [
     }
 ];
 
-/* ===== i18n ===== */
 let currentLang = 'ru';
 
 function applyLanguage(lang) {
@@ -1993,7 +2329,6 @@ function applyLanguage(lang) {
     try { localStorage.setItem('bygone-lang', lang); } catch (e) {}
 }
 
-/* ===== RENDER ===== */
 function renderNew() {
     const grid = document.getElementById('newGrid');
     grid.innerHTML = NEW_FEATURES.map((f, i) => `
@@ -2094,7 +2429,6 @@ function renderFaq() {
     });
 }
 
-/* ===== FLOATING LINES ===== */
 (function initLines() {
     const wrap = document.getElementById('bgLines');
     if (!wrap) return;
@@ -2114,7 +2448,6 @@ function renderFaq() {
     }
 })();
 
-/* ===== MOUSE GLOW ===== */
 (function initGlow() {
     const glow = document.getElementById('bgGlow');
     if (!glow) return;
@@ -2146,7 +2479,6 @@ function renderFaq() {
     })();
 })();
 
-/* ===== PARALLAX ===== */
 (function initParallax() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -2172,7 +2504,6 @@ function renderFaq() {
         });
     }, { passive: true });
 })();
-/* ===== PARTICLES ===== */
 (function initParticles() {
     const canvas = document.getElementById('particles');
     if (!canvas) return;
@@ -2256,7 +2587,6 @@ function renderFaq() {
     });
 })();
 
-/* ===== REVEAL ===== */
 let revealObserver;
 
 function observeReveal() {
@@ -2279,7 +2609,6 @@ function observeReveal() {
     document.querySelectorAll('.reveal:not(.in)').forEach(el => revealObserver.observe(el));
 }
 
-/* ===== COUNTERS ===== */
 function animateCounters() {
     document.querySelectorAll('[data-count]').forEach(el => {
         if (el.dataset.done) return;
@@ -2303,7 +2632,6 @@ function animateCounters() {
     });
 }
 
-/* ===== NAV ===== */
 const nav = document.getElementById('navbar');
 const toTop = document.getElementById('toTop');
 const sections = Array.from(document.querySelectorAll('section[id], .hero[id]'));
@@ -2331,12 +2659,10 @@ toTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-/* ===== LANG ===== */
 document.getElementById('langToggle').addEventListener('click', () => {
     applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
 });
 
-/* ===== MOBILE MENU ===== */
 document.getElementById('burger').addEventListener('click', () => {
     const links = document.querySelector('.nav-links');
     if (links.style.display === 'flex') {
@@ -2367,7 +2693,6 @@ document.querySelectorAll('.nav-links a').forEach(a => {
     });
 });
 
-/* ===== TOAST ===== */
 let toastTimer;
 
 function showToast(msg) {
@@ -2378,7 +2703,6 @@ function showToast(msg) {
     toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-/* ===== INIT ===== */
 (function init() {
     let saved = 'ru';
     try { saved = localStorage.getItem('bygone-lang') || 'ru'; } catch (e) {}
